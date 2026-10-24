@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type LayoutId = "strip-2" | "strip-3" | "strip-4" | "4r-grid" | "4r-split" | "4r-3a" | "4r-3b" | "4r-2";
 type FilterId = "none" | "romantic" | "clean" | "nature" | "sunlit" | "mono" | "noir" | "silver";
@@ -29,9 +29,9 @@ const FILTERS: { id: FilterId; name: string; css: string; icon: string }[] = [
 ];
 
 const CAMERA_COPY: Record<CameraStatus, { title: string; message: string }> = {
-  waiting: { title: "Camera preview is ready when you are", message: "Your camera will start once you’re connected to the booth." },
+  waiting: { title: "Camera preview is off", message: "Turn it on to check your framing. Your microphone stays off." },
   requesting: { title: "Starting your camera…", message: "Allow camera access in your browser to check the preview. Your microphone stays off." },
-  ready: { title: "Camera is working", message: "Your live preview is ready. Your camera stays on this device." },
+  ready: { title: "Camera is working", message: "Your live preview stays on this device. Your microphone is never accessed." },
   denied: { title: "Camera permission needed", message: "Allow camera access in your browser settings, then try again. Your microphone is not used." },
   missing: { title: "No camera found", message: "Connect a camera to this device, then try again." },
   busy: { title: "Camera is busy", message: "Close other apps using the camera, then try again." },
@@ -48,39 +48,46 @@ function cameraStatusForError(error: unknown): CameraStatus {
   return "error";
 }
 
-export default function RoomCameraSetup({ active }: { active: boolean }) {
+export default function RoomCameraSetup() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const trackEndedHandler = useRef<{ track: MediaStreamTrack; handler: () => void } | null>(null);
+  const requestSequence = useRef(0);
   const [cameraStatus, setCameraStatus] = useState<CameraStatus>("waiting");
-  const [retryCount, setRetryCount] = useState(0);
   const [layout, setLayout] = useState<LayoutId>("strip-2");
   const [filter, setFilter] = useState<FilterId>("none");
   const selectedFilter = FILTERS.find((option) => option.id === filter) ?? FILTERS[0];
   const cameraCopy = CAMERA_COPY[cameraStatus];
 
-  useEffect(() => {
-    if (!active) {
-      setCameraStatus("waiting");
-      return;
+  const releaseCurrentStream = useCallback(() => {
+    const endedHandler = trackEndedHandler.current;
+    if (endedHandler) {
+      endedHandler.track.removeEventListener("ended", endedHandler.handler);
+      trackEndedHandler.current = null;
     }
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+  }, []);
 
-    let cancelled = false;
+  async function startCamera() {
+    const requestId = ++requestSequence.current;
+    releaseCurrentStream();
     if (!navigator.mediaDevices?.getUserMedia) {
       setCameraStatus("unsupported");
       return;
     }
 
     setCameraStatus("requesting");
-    void navigator.mediaDevices.getUserMedia({
-      audio: false,
-      video: { facingMode: "user" },
-    }).then((stream) => {
-      if (cancelled) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { facingMode: "user" },
+      });
+      if (requestId !== requestSequence.current) {
         stream.getTracks().forEach((track) => track.stop());
         return;
       }
-
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -92,24 +99,23 @@ export default function RoomCameraSetup({ active }: { active: boolean }) {
       videoTrack?.addEventListener("ended", handleTrackEnded);
       if (videoTrack) trackEndedHandler.current = { track: videoTrack, handler: handleTrackEnded };
       setCameraStatus("ready");
-    }).catch((error: unknown) => {
-      if (!cancelled) setCameraStatus(cameraStatusForError(error));
-    });
+    } catch (error: unknown) {
+      if (requestId === requestSequence.current) setCameraStatus(cameraStatusForError(error));
+    }
+  }
 
-    return () => {
-      cancelled = true;
-      const endedHandler = trackEndedHandler.current;
-      if (endedHandler) {
-        endedHandler.track.removeEventListener("ended", endedHandler.handler);
-        trackEndedHandler.current = null;
-      }
-      streamRef.current?.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-      if (videoRef.current) videoRef.current.srcObject = null;
-    };
-  }, [active, retryCount]);
+  function stopCamera() {
+    requestSequence.current += 1;
+    releaseCurrentStream();
+    setCameraStatus("waiting");
+  }
 
-  const canRetry = active && ["denied", "missing", "busy", "error", "ended"].includes(cameraStatus);
+  useEffect(() => () => {
+    requestSequence.current += 1;
+    releaseCurrentStream();
+  }, [releaseCurrentStream]);
+
+  const canRetry = ["denied", "missing", "busy", "error", "ended"].includes(cameraStatus);
 
   return (
     <section className="room-camera-setup" aria-labelledby="camera-setup-title">
@@ -138,10 +144,11 @@ export default function RoomCameraSetup({ active }: { active: boolean }) {
               <span className="camera-preview-symbol" aria-hidden="true">{cameraStatus === "requesting" ? "◌" : "◉"}</span>
               <strong>{cameraCopy.title}</strong>
               <p>{cameraCopy.message}</p>
-              {canRetry && <button className="button button--secondary camera-retry" onClick={() => setRetryCount((count) => count + 1)} type="button">Try camera again</button>}
+              {cameraStatus === "waiting" && <button className="button button--primary camera-retry" onClick={startCamera} type="button">Turn on camera</button>}
+              {canRetry && <button className="button button--secondary camera-retry" onClick={startCamera} type="button">Try camera again</button>}
             </div>
           )}
-          {cameraStatus === "ready" && <span className="camera-ready-indicator"><i aria-hidden="true" /> Camera ready</span>}
+          {cameraStatus === "ready" && <div className="camera-ready-controls"><span className="camera-ready-indicator"><i aria-hidden="true" /> Camera ready</span><button className="camera-stop-button" onClick={stopCamera} type="button">Turn camera off</button></div>}
         </div>
 
         <div className="camera-preferences">

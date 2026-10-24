@@ -25,7 +25,8 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
   const isValid = validRoomId.test(roomId);
   const self = room?.participants.find((participant) => participant.id === selfParticipantId) ?? null;
   const other = room?.participants.find((participant) => participant.id !== selfParticipantId) ?? null;
-  const activeTheme = BOOTH_THEMES.find((option) => option.id === room?.theme) ?? BOOTH_THEMES[BOOTH_THEMES.length - 1];
+  const activeTheme = BOOTH_THEMES.find((option) => option.id === room?.theme)
+    ?? BOOTH_THEMES.find((option) => option.id === DEFAULT_BOOTH_THEME)!;
 
   useEffect(() => {
     if (!isValid) {
@@ -55,7 +56,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
     };
     const onConnect = () => {
       setRoomError(null);
-      setConnectionStatus("connected");
+      setConnectionStatus("joining");
       socket.emit("room:join", { roomId });
     };
     const onConnectError = () => {
@@ -127,8 +128,8 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
   const showRoomErrorCard = !isValid || roomError?.code === "ROOM_NOT_FOUND" || roomError?.code === "INVALID_ROOM_ID" || roomError?.code === "ROOM_EXPIRED" || roomError?.code === "ROOM_FULL";
 
   return (
-    <div className="theme-shell" data-booth-theme={room?.theme ?? DEFAULT_BOOTH_THEME}>
-      <ThemeAtmosphere theme={room?.theme ?? DEFAULT_BOOTH_THEME} />
+    <div className="theme-shell" data-booth-theme={room?.theme}>
+      {room && <ThemeAtmosphere theme={room.theme} />}
       <SiteHeader />
       <main className="waiting-page page-shell">
         <button className="back-link back-link-button" disabled={leaving} onClick={leaveRoom} type="button">← {leaving ? "Leaving the booth…" : "Leave the booth"}</button>
@@ -146,12 +147,20 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
               <h1>Good things are <span>developing.</span></h1>
               <p>Invite your person in. This room is ready when you are.</p>
             </div>
-            <div className="room-theme-banner">
-              <ThemeArtwork theme={activeTheme.id} />
-              <div><p className="eyebrow">THIS BOOTH’S MOOD</p><h2>{activeTheme.name}</h2><span>{activeTheme.description}</span></div>
-              <span className="room-theme-spark" aria-hidden="true">✦</span>
-            </div>
-            <RoomCameraSetup active={Boolean(self && connectionStatus === "connected")} />
+            {room ? (
+              <div className="room-theme-banner">
+                <ThemeArtwork theme={activeTheme.id} />
+                <div><p className="eyebrow">THIS BOOTH’S MOOD</p><h2>{activeTheme.name}</h2><span>{activeTheme.description}</span></div>
+                <span className="room-theme-spark" aria-hidden="true">✦</span>
+              </div>
+            ) : (
+              <div className="room-theme-loading" role={roomError ? "alert" : "status"}>
+                <span className="room-theme-loading-icon" aria-hidden="true">◌</span>
+                <div><p className="eyebrow">SAVED BOOTH MOOD</p><h2>{roomError ? "Reconnecting to your booth" : "Restoring your chosen theme…"}</h2><span>{roomError?.message ?? "We’ll show the room’s saved theme as soon as it reconnects."}</span></div>
+                {roomError?.code === "SERVER_UNAVAILABLE" && <button className="button button--secondary room-retry" onClick={() => { setRoomError(null); setConnectionStatus("connecting"); socket.connect(); }} type="button">Try again</button>}
+              </div>
+            )}
+            <RoomCameraSetup />
             <section className="room-panel" aria-labelledby="room-title">
               <div className="room-panel-top">
                 <div><p className="eyebrow">Room code</p><h2 id="room-title">{formatRoomId(roomId)}</h2></div>
@@ -175,7 +184,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
                   <button className="button button--secondary guest-action" onClick={copyInvite} type="button">{copyState}</button>
                 </article>
               </div>
-              <div className="room-panel-bottom"><span><i className="online-dot" /> {other ? "Both people are connected" : "Waiting for your person"}</span><span>{room?.participants.length ?? 0} of 2 people in this booth</span></div>
+              <div className="room-panel-bottom"><span><i className="online-dot" /> {connectionStatus !== "connected" ? "Connecting to the booth" : other ? "Both people are connected" : "Waiting for your person"}</span><span>{room?.participants.length ?? 0} of 2 people in this booth</span></div>
             </section>
             <p className="waiting-footnote">Tip: send the invite link in your favorite chat. The room code works too.</p>
           </>

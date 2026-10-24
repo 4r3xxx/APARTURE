@@ -488,6 +488,12 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .room-theme-banner h2 { margin: 0; color: var(--ink); font-family: Georgia, serif; font-size: 16px; font-weight: 400; }
 .room-theme-banner div > span { display: block; margin-top: 2px; color: var(--ink-soft); font-size: 9px; }
 .room-theme-spark { margin-left: auto; padding-right: 4px; color: var(--clay); font-size: 22px; }
+.room-theme-loading { width: min(100%, 790px); min-height: 76px; display: flex; align-items: center; gap: 12px; margin: -6px auto 15px; padding: 12px 15px; border: 1px dashed var(--line); border-radius: 9px; background: var(--surface-soft); color: var(--ink); }
+.room-theme-loading-icon { color: var(--clay); font-size: 23px; }
+.room-theme-loading .eyebrow { margin: 0 0 3px; font-size: 8px; }
+.room-theme-loading h2 { margin: 0; color: var(--ink); font-family: Georgia, serif; font-size: 15px; font-weight: 400; }
+.room-theme-loading div > span { display: block; margin-top: 3px; color: var(--ink-soft); font-size: 9px; }
+.room-theme-loading .room-retry { margin-left: auto; }
 
 .theme-shell[data-booth-theme="halloween"] .snapshot { border-color: #f6eee3; }
 .theme-shell[data-booth-theme="halloween"] .portrait-pair { background: #43344b; }
@@ -522,6 +528,8 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   .theme-teaser-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
   .theme-teaser { font-size: 8px; }
   .room-theme-banner { margin-top: -4px; }
+  .room-theme-loading { margin-top: -4px; }
+  .room-theme-loading .room-retry { padding-inline: 9px; font-size: 9px; }
 }
 
 .room-camera-setup { width: min(100%, 980px); margin: 0 auto 17px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 14px 38px rgba(55, 48, 39, .06); }
@@ -539,8 +547,11 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .camera-preview-message strong { font-family: Georgia, serif; font-size: 16px; font-weight: 400; }
 .camera-preview-message p { max-width: 260px; margin: 7px 0 0; color: rgba(255, 255, 255, .76); font-size: 9px; line-height: 1.55; }
 .camera-preview-message .camera-retry { min-height: 32px; margin-top: 12px; padding-inline: 13px; font-size: 9px; }
-.camera-ready-indicator { position: absolute; right: 9px; bottom: 9px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,.2); border-radius: 99px; background: rgba(21, 25, 22, .72); padding: 6px 9px; color: white; font-size: 9px; backdrop-filter: blur(8px); }
+.camera-ready-controls { position: absolute; right: 9px; bottom: 9px; display: flex; align-items: center; gap: 7px; }
+.camera-ready-indicator { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,.2); border-radius: 99px; background: rgba(21, 25, 22, .72); padding: 6px 9px; color: white; font-size: 9px; backdrop-filter: blur(8px); }
 .camera-ready-indicator i { width: 6px; height: 6px; border-radius: 50%; background: #a8d39a; box-shadow: 0 0 0 3px rgba(168, 211, 154, .18); }
+.camera-stop-button { min-height: 28px; border: 1px solid rgba(255,255,255,.35); border-radius: 99px; background: rgba(21, 25, 22, .72); padding: 5px 9px; color: white; font-size: 9px; cursor: pointer; backdrop-filter: blur(8px); }
+.camera-stop-button:hover { background: rgba(21, 25, 22, .9); }
 .layout-picker { min-width: 0; margin: 0; border: 0; padding: 0; }
 .layout-picker legend, .filter-picker-heading p { margin: 0 0 8px; color: var(--ink); font-family: Georgia, serif; font-size: 15px; }
 .layout-group + .layout-group { margin-top: 11px; }
@@ -583,7 +594,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .filter-swatch--mono { background: linear-gradient(145deg, #e3e3e3, #909090 54%, #343434 55%); }
 .filter-swatch--noir { background: linear-gradient(145deg, #b7b7b7, #464646 54%, #111 55%); }
 .filter-swatch--silver { background: linear-gradient(145deg, #e3e9ec, #aab6bb 54%, #58636b 55%); }
-.layout-choice:focus-visible, .filter-choice:focus-visible, .camera-retry:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
+.layout-choice:focus-visible, .filter-choice:focus-visible, .camera-retry:focus-visible, .camera-stop-button:focus-visible, .room-retry:focus-visible { outline: 2px solid var(--clay); outline-offset: 2px; }
 
 @media (max-width: 760px) {
   .room-camera-grid { grid-template-columns: minmax(180px, .75fr) minmax(0, 1.4fr); gap: 12px; }
