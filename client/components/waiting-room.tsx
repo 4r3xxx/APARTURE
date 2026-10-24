@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/site-header";
+import ThemeAtmosphere from "@/components/theme-atmosphere";
 import ThemeArtwork from "@/components/theme-artwork";
 import { formatRoomId } from "@/lib/room";
 import { socket } from "@/lib/socket";
@@ -126,6 +127,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
 
   return (
     <div className="theme-shell" data-booth-theme={room?.theme ?? DEFAULT_BOOTH_THEME}>
+      <ThemeAtmosphere theme={room?.theme ?? DEFAULT_BOOTH_THEME} />
       <SiteHeader />
       <main className="waiting-page page-shell">
         <button className="back-link back-link-button" disabled={leaving} onClick={leaveRoom} type="button">← {leaving ? "Leaving the booth…" : "Leave the booth"}</button>

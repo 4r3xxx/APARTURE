@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import SiteHeader from "@/components/site-header";
+import ThemeAtmosphere from "@/components/theme-atmosphere";
 import { parseRoomId } from "@/lib/room";
 import { DEFAULT_BOOTH_THEME } from "@/lib/themes";
 
@@ -24,6 +25,7 @@ export default function JoinRoomPage() {
 
   return (
     <div className="theme-shell" data-booth-theme={DEFAULT_BOOTH_THEME}>
+      <ThemeAtmosphere theme={DEFAULT_BOOTH_THEME} />
       <SiteHeader />
       <main className="flow-page page-shell">
         <Link className="back-link" href="/">← Back to home</Link>

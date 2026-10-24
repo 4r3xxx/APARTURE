@@ -1,5 +1,6 @@
 import Link from "next/link";
 import SiteHeader from "@/components/site-header";
+import ThemeAtmosphere from "@/components/theme-atmosphere";
 import ThemeArtwork from "@/components/theme-artwork";
 import { BOOTH_THEMES, DEFAULT_BOOTH_THEME } from "@/lib/themes";
 
@@ -11,6 +12,7 @@ const snapshots = [
 export default function Home() {
   return (
     <div className="theme-shell" data-booth-theme={DEFAULT_BOOTH_THEME}>
+      <ThemeAtmosphere theme={DEFAULT_BOOTH_THEME} />
       <SiteHeader />
       <main>
         <section className="hero page-shell">
@@ -49,7 +51,7 @@ export default function Home() {
         <section className="theme-invitation page-shell" aria-labelledby="themes-title">
           <div className="theme-invitation-copy">
             <p className="eyebrow">A booth that feels like you</p>
-            <h2 id="themes-title">Seven little worlds.<br /><span>One favorite person.</span></h2>
+          <h2 id="themes-title">Six little worlds.<br /><span>One favorite person.</span></h2>
             <p>Set the mood before the countdown. Pick a seasonal scene, a clean studio look, or something made for the two of you.</p>
           </div>
           <div className="theme-teaser-grid">

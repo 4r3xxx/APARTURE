@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import SiteHeader from "@/components/site-header";
+import ThemeAtmosphere from "@/components/theme-atmosphere";
 import ThemeArtwork from "@/components/theme-artwork";
 import { BOOTH_THEMES, DEFAULT_BOOTH_THEME } from "@/lib/themes";
 import { formatRoomId } from "@/lib/room";
@@ -84,6 +85,7 @@ export default function CreateRoomPage() {
 
   return (
     <div className="theme-shell" data-booth-theme={theme}>
+      <ThemeAtmosphere theme={theme} />
       <SiteHeader />
       <main className="flow-page page-shell">
         <Link className="back-link" href="/">← Back to home</Link>
