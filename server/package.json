@@ -10,9 +10,12 @@
     "test": "tsx --test src/server.test.ts src/rooms/room-manager.test.ts"
   },
   "dependencies": {
+    "@photobooth/shared": "0.1.0",
+    "@socket.io/redis-adapter": "^8.3.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
+    "ioredis": "^6.0.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {

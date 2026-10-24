@@ -38,6 +38,17 @@ export interface ExpiredRoom {
   socketIds: string[];
 }
 
+export type MaybePromise<T> = T | Promise<T>;
+
+export interface RoomStore {
+  create(socketId: string, theme?: BoothTheme): MaybePromise<RoomMembership>;
+  join(socketId: string, inputRoomId: string): MaybePromise<JoinResult>;
+  setReady(socketId: string, ready: boolean): MaybePromise<RoomSnapshot>;
+  leave(socketId: string): MaybePromise<LeaveResult | null>;
+  expireInactive(now: number, idleTimeoutMs: number): MaybePromise<ExpiredRoom[]>;
+  touch?(socketId: string): MaybePromise<void>;
+}
+
 export class RoomManagerError extends Error {
   constructor(
     public readonly code: RoomErrorCode,
@@ -49,7 +60,7 @@ export class RoomManagerError extends Error {
   }
 }
 
-export class RoomManager {
+export class RoomManager implements RoomStore {
   private readonly rooms = new Map<string, StoredRoom>();
   private readonly roomBySocket = new Map<string, string>();
 
