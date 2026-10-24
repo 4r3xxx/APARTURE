@@ -64,7 +64,7 @@ export class RoomManager implements RoomStore {
   private readonly rooms = new Map<string, StoredRoom>();
   private readonly roomBySocket = new Map<string, string>();
 
-  create(socketId: string, theme: BoothTheme = "love"): RoomMembership {
+  create(socketId: string, theme: BoothTheme = "aesthetic"): RoomMembership {
     this.assertSocketIsFree(socketId);
 
     let roomId = randomBytes(16).toString("hex");

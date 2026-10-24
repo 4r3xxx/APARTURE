@@ -1,5 +1,5 @@
 export type RoomRole = "host" | "guest";
-export type BoothTheme = "halloween" | "christmas" | "summer" | "valentines" | "aesthetic" | "modern" | "love";
+export type BoothTheme = "halloween" | "christmas" | "summer" | "valentines" | "aesthetic" | "modern";
 export type RoomErrorCode = "INVALID_ROOM_ID" | "ROOM_NOT_FOUND" | "ROOM_FULL" | "ALREADY_IN_ROOM" | "NOT_IN_ROOM" | "INVALID_PAYLOAD" | "ROOM_EXPIRED" | "SERVER_UNAVAILABLE";
 
 export interface RoomParticipant {

@@ -19,7 +19,7 @@ import { RedisRoomManager } from "./rooms/redis-room-manager.js";
 
 const ROOM_IDLE_TIMEOUT_MS = 60 * 60 * 1000;
 const ROOM_CLEANUP_INTERVAL_MS = 60 * 1000;
-const BOOTH_THEMES: BoothTheme[] = ["halloween", "christmas", "summer", "valentines", "aesthetic", "modern", "love"];
+const BOOTH_THEMES: BoothTheme[] = ["halloween", "christmas", "summer", "valentines", "aesthetic", "modern"];
 
 type BoothSocket = Socket<ClientToServerEvents, ServerToClientEvents, InterServerEvents, PhotoboothSocketData>;
 type BoothServer = Server<ClientToServerEvents, ServerToClientEvents, InterServerEvents, PhotoboothSocketData>;
@@ -80,7 +80,7 @@ export function createPhotoboothServer(options: {
   io.on("connection", (socket: BoothSocket) => {
     socket.on("room:create", async (request) => {
       try {
-        const theme = request?.theme ?? "love";
+        const theme = request?.theme ?? "aesthetic";
         if (!BOOTH_THEMES.includes(theme)) {
           socket.emit("room:error", toRoomError(new RoomManagerError("INVALID_PAYLOAD", ERROR_MESSAGES.INVALID_PAYLOAD)));
           return;

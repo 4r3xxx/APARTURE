@@ -154,7 +154,7 @@ export class RedisRoomManager implements RoomStore {
     this.ttlSeconds = Math.ceil(idleTimeoutMs / 1000);
   }
 
-  async create(socketId: string, theme: BoothTheme = "love"): Promise<RoomMembership> {
+  async create(socketId: string, theme: BoothTheme = "aesthetic"): Promise<RoomMembership> {
     const now = Date.now();
     const participant = this.createParticipant("host", now);
     let roomId = randomBytes(16).toString("hex");

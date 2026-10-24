@@ -21,7 +21,7 @@ The browser connects to the signaling server at `NEXT_PUBLIC_SIGNALING_URL`. Soc
 ## Room lifecycle and privacy
 
 - Room state lives in the signaling server’s memory. No account, database, or photo upload is part of this phase.
-- Supported room themes are `halloween`, `christmas`, `summer`, `valentines`, `aesthetic`, `modern`, and `love`. Older clients that create a room without a theme receive `love` by default.
+- Supported room themes are `halloween`, `christmas`, `summer`, `valentines`, `aesthetic`, and `modern`. Clients that create a room without a theme receive `aesthetic` by default.
 - Room IDs contain 128 random bits and are validated on the server. A room admits at most two sockets, and a socket can be in only one room at a time.
 - An empty room is deleted immediately. A room with no activity for one hour expires and connected participants receive `room:error` with `ROOM_EXPIRED`.
 - A disconnected participant is removed; if another person remains, they receive `room:user-left` with reason `disconnected` and can share the same link again.

@@ -319,13 +319,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   --line: #dce1e5; --surface: #ffffff; --surface-soft: #f5f6f7; --surface-muted: #e9edf0;
   --accent-soft: #e2e9ee; --accent-alt: #e2e6e9; --page-glow: #e4e9ed; --banner-text: #d6dfe5;
 }
-.theme-shell[data-booth-theme="love"] {
-  --paper: #f8f5ee; --paper-deep: #eee8db; --ink: #263a32; --ink-soft: #65756c;
-  --green: #315d4b; --green-dark: #254838; --green-pale: #e2ebe1; --clay: #c87558;
-  --line: #e5dfd3; --surface: #fffdf7; --surface-soft: #fbf8f0; --surface-muted: #f4f0e7;
-  --accent-soft: #f3e1d6; --accent-alt: #e4eadc; --page-glow: #eee9d9;
-}
-
 .theme-shell .site-header { border-color: color-mix(in srgb, var(--ink) 11%, transparent); }
 .theme-shell .main-nav, .theme-shell .back-link { color: var(--ink-soft); }
 .theme-shell .brand-name, .theme-shell .section-heading h2, .theme-shell .step-card h3 { color: var(--ink); }
@@ -396,7 +389,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .theme-art--valentines { background: radial-gradient(circle at 72% 28%, #fff2e8 0 12%, transparent 13%), linear-gradient(145deg, #b04d72, #df8a9a 58%, #f3c5bd); }
 .theme-art--aesthetic { background: radial-gradient(circle at 74% 25%, #f3e8d7 0 13%, transparent 14%), linear-gradient(145deg, #9a887b, #b9aa98 58%, #77816e); }
 .theme-art--modern { background: radial-gradient(circle at 72% 26%, #f5f7f9 0 11%, transparent 12%), linear-gradient(145deg, #333b44, #748693 58%, #bbc4c8); }
-.theme-art--love { background: radial-gradient(circle at 72% 27%, #fae5c8 0 12%, transparent 13%), linear-gradient(145deg, #80917b, #bd8a78 58%, #e9c7ab); }
 
 .theme-invitation { display: grid; grid-template-columns: minmax(230px, .8fr) 1.2fr; align-items: center; gap: 32px; padding-top: 29px; padding-bottom: 37px; border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); }
 .theme-invitation-copy h2 { margin: 9px 0 9px; font-family: Georgia, serif; font-size: clamp(26px, 3vw, 34px); font-weight: 400; letter-spacing: -.7px; line-height: 1.1; }
@@ -430,7 +422,6 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .theme-shell[data-booth-theme="valentines"] .snapshot--right { background: #d996a4; }
 .theme-shell[data-booth-theme="aesthetic"] .portrait-pair { background: #e7dfd4; }
 .theme-shell[data-booth-theme="modern"] .portrait-pair { background: #dfe4e8; }
-.theme-shell[data-booth-theme="love"] .portrait-pair { background: #e9e3d3; }
 
 @media (max-width: 760px) {
   .theme-invitation { grid-template-columns: 1fr; gap: 18px; padding-top: 26px; }
