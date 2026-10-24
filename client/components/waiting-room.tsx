@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/site-header";
+import RoomCameraSetup from "@/components/room-camera-setup";
 import ThemeAtmosphere from "@/components/theme-atmosphere";
 import ThemeArtwork from "@/components/theme-artwork";
 import { formatRoomId } from "@/lib/room";
@@ -150,6 +151,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
               <div><p className="eyebrow">THIS BOOTH’S MOOD</p><h2>{activeTheme.name}</h2><span>{activeTheme.description}</span></div>
               <span className="room-theme-spark" aria-hidden="true">✦</span>
             </div>
+            <RoomCameraSetup active={Boolean(self && connectionStatus === "connected")} />
             <section className="room-panel" aria-labelledby="room-title">
               <div className="room-panel-top">
                 <div><p className="eyebrow">Room code</p><h2 id="room-title">{formatRoomId(roomId)}</h2></div>
