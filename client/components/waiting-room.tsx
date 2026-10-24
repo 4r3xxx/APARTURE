@@ -4,8 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import SiteHeader from "@/components/site-header";
+import ThemeArtwork from "@/components/theme-artwork";
 import { formatRoomId } from "@/lib/room";
 import { socket } from "@/lib/socket";
+import { BOOTH_THEMES, DEFAULT_BOOTH_THEME } from "@/lib/themes";
 import type { RoomError, RoomMembership, RoomParticipantJoined, RoomParticipantLeft, RoomSnapshot } from "@photobooth/shared";
 
 const validRoomId = /^[a-f0-9]{32}$/i;
@@ -21,6 +23,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
   const isValid = validRoomId.test(roomId);
   const self = room?.participants.find((participant) => participant.id === selfParticipantId) ?? null;
   const other = room?.participants.find((participant) => participant.id !== selfParticipantId) ?? null;
+  const activeTheme = BOOTH_THEMES.find((option) => option.id === room?.theme) ?? BOOTH_THEMES[BOOTH_THEMES.length - 1];
 
   useEffect(() => {
     if (!isValid) {
@@ -122,7 +125,7 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
   const showRoomErrorCard = !isValid || roomError?.code === "ROOM_NOT_FOUND" || roomError?.code === "INVALID_ROOM_ID" || roomError?.code === "ROOM_EXPIRED" || roomError?.code === "ROOM_FULL";
 
   return (
-    <>
+    <div className="theme-shell" data-booth-theme={room?.theme ?? DEFAULT_BOOTH_THEME}>
       <SiteHeader />
       <main className="waiting-page page-shell">
         <button className="back-link back-link-button" disabled={leaving} onClick={leaveRoom} type="button">← {leaving ? "Leaving the booth…" : "Leave the booth"}</button>
@@ -139,6 +142,11 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
               <p className="eyebrow"><span className="eyebrow-dot" /> YOUR PRIVATE BOOTH</p>
               <h1>Good things are <span>developing.</span></h1>
               <p>Invite your person in. This room is ready when you are.</p>
+            </div>
+            <div className="room-theme-banner">
+              <ThemeArtwork theme={activeTheme.id} />
+              <div><p className="eyebrow">THIS BOOTH’S MOOD</p><h2>{activeTheme.name}</h2><span>{activeTheme.description}</span></div>
+              <span className="room-theme-spark" aria-hidden="true">✦</span>
             </div>
             <section className="room-panel" aria-labelledby="room-title">
               <div className="room-panel-top">
@@ -169,6 +177,6 @@ export default function WaitingRoom({ roomId }: { roomId: string }) {
           </>
         )}
       </main>
-    </>
+    </div>
   );
 }

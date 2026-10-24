@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import SiteHeader from "@/components/site-header";
 import { parseRoomId } from "@/lib/room";
+import { DEFAULT_BOOTH_THEME } from "@/lib/themes";
 
 export default function JoinRoomPage() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function JoinRoomPage() {
   }
 
   return (
-    <>
+    <div className="theme-shell" data-booth-theme={DEFAULT_BOOTH_THEME}>
       <SiteHeader />
       <main className="flow-page page-shell">
         <Link className="back-link" href="/">← Back to home</Link>
@@ -50,6 +51,6 @@ export default function JoinRoomPage() {
           <p className="privacy-note"><span aria-hidden="true">✦</span> No account needed. Just bring your best pose.</p>
         </section>
       </main>
-    </>
+    </div>
   );
 }

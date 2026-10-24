@@ -1,5 +1,7 @@
 import Link from "next/link";
 import SiteHeader from "@/components/site-header";
+import ThemeArtwork from "@/components/theme-artwork";
+import { BOOTH_THEMES, DEFAULT_BOOTH_THEME } from "@/lib/themes";
 
 const snapshots = [
   { color: "snapshot--peach", initials: "A", label: "you", tilt: "snapshot--left" },
@@ -8,7 +10,7 @@ const snapshots = [
 
 export default function Home() {
   return (
-    <>
+    <div className="theme-shell" data-booth-theme={DEFAULT_BOOTH_THEME}>
       <SiteHeader />
       <main>
         <section className="hero page-shell">
@@ -44,6 +46,22 @@ export default function Home() {
           </div>
         </section>
 
+        <section className="theme-invitation page-shell" aria-labelledby="themes-title">
+          <div className="theme-invitation-copy">
+            <p className="eyebrow">A booth that feels like you</p>
+            <h2 id="themes-title">Seven little worlds.<br /><span>One favorite person.</span></h2>
+            <p>Set the mood before the countdown. Pick a seasonal scene, a clean studio look, or something made for the two of you.</p>
+          </div>
+          <div className="theme-teaser-grid">
+            {BOOTH_THEMES.map((theme) => (
+              <Link className="theme-teaser" href={`/create#theme-${theme.id}`} key={theme.id} aria-label={`Choose a ${theme.name} booth theme`}>
+                <ThemeArtwork theme={theme.id} compact />
+                <span>{theme.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section className="how-it-works page-shell" aria-labelledby="how-title">
           <div className="section-heading"><p className="eyebrow">Good things happen in threes</p><h2 id="how-title">Your next favorite photo is three steps away.</h2></div>
           <div className="steps-grid">
@@ -56,6 +74,6 @@ export default function Home() {
         <section className="closing-banner page-shell"><div><p className="eyebrow">Your booth is waiting</p><h2>One link. Two smiles. A very good memory.</h2></div><Link className="button button--light" href="/create">Make your first room <span aria-hidden="true">↗</span></Link></section>
       </main>
       <footer className="site-footer page-shell"><span>© 2026 The Little Booth</span><span>Made with a little extra love <b aria-hidden="true">♥</b></span></footer>
-    </>
+    </div>
   );
 }

@@ -6,7 +6,7 @@ The browser connects to the signaling server at `NEXT_PUBLIC_SIGNALING_URL`. Soc
 
 | Direction | Event | Payload | Result |
 | --- | --- | --- | --- |
-| Client → server | `room:create` | none | Creates a room with a cryptographically random 128-bit ID and adds the caller as host. |
+| Client → server | `room:create` | `{ theme }` | Creates a room with a cryptographically random 128-bit ID and adds the caller as host. The selected booth theme is included in every room snapshot. |
 | Server → client | `room:created` | `RoomMembership` | Returns the room snapshot and the caller’s participant ID. |
 | Client → server | `room:join` | `{ roomId }` | Validates the ID and adds the caller if a seat is available. Repeating the same join from the same socket is idempotent. |
 | Server → client | `room:joined` | `RoomMembership` | Returns the current snapshot and the caller’s participant ID. |
@@ -21,6 +21,7 @@ The browser connects to the signaling server at `NEXT_PUBLIC_SIGNALING_URL`. Soc
 ## Room lifecycle and privacy
 
 - Room state lives in the signaling server’s memory. No account, database, or photo upload is part of this phase.
+- Supported room themes are `halloween`, `christmas`, `summer`, `valentines`, `aesthetic`, `modern`, and `love`. Older clients that create a room without a theme receive `love` by default.
 - Room IDs contain 128 random bits and are validated on the server. A room admits at most two sockets, and a socket can be in only one room at a time.
 - An empty room is deleted immediately. A room with no activity for one hour expires and connected participants receive `room:error` with `ROOM_EXPIRED`.
 - A disconnected participant is removed; if another person remains, they receive `room:user-left` with reason `disconnected` and can share the same link again.

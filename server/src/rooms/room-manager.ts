@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import type {
+  BoothTheme,
   RoomErrorCode,
   RoomMembership,
   RoomParticipant,
@@ -16,6 +17,7 @@ interface StoredParticipant {
 
 interface StoredRoom {
   id: string;
+  theme: BoothTheme;
   createdAt: number;
   updatedAt: number;
   participants: Map<string, StoredParticipant>;
@@ -51,7 +53,7 @@ export class RoomManager {
   private readonly rooms = new Map<string, StoredRoom>();
   private readonly roomBySocket = new Map<string, string>();
 
-  create(socketId: string): RoomMembership {
+  create(socketId: string, theme: BoothTheme = "love"): RoomMembership {
     this.assertSocketIsFree(socketId);
 
     let roomId = randomBytes(16).toString("hex");
@@ -61,6 +63,7 @@ export class RoomManager {
     const participant = this.createParticipant("host", now);
     const room: StoredRoom = {
       id: roomId,
+      theme,
       createdAt: now,
       updatedAt: now,
       participants: new Map([[participant.id, { publicParticipant: participant, socketId }]]),
@@ -187,6 +190,7 @@ export class RoomManager {
   private toSnapshot(room: StoredRoom): RoomSnapshot {
     return {
       id: room.id,
+      theme: room.theme,
       createdAt: room.createdAt,
       updatedAt: room.updatedAt,
       participants: [...room.participants.values()]

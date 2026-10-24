@@ -1,4 +1,5 @@
 export type RoomRole = "host" | "guest";
+export type BoothTheme = "halloween" | "christmas" | "summer" | "valentines" | "aesthetic" | "modern" | "love";
 export type RoomErrorCode = "INVALID_ROOM_ID" | "ROOM_NOT_FOUND" | "ROOM_FULL" | "ALREADY_IN_ROOM" | "NOT_IN_ROOM" | "INVALID_PAYLOAD" | "ROOM_EXPIRED" | "SERVER_UNAVAILABLE";
 
 export interface RoomParticipant {
@@ -10,6 +11,7 @@ export interface RoomParticipant {
 
 export interface RoomSnapshot {
   id: string;
+  theme: BoothTheme;
   createdAt: number;
   updatedAt: number;
   participants: RoomParticipant[];
@@ -21,6 +23,7 @@ export interface RoomMembership {
 }
 
 export interface RoomJoinRequest { roomId: string }
+export interface RoomCreateRequest { theme: BoothTheme }
 export interface RoomReadyRequest { ready: boolean }
 export interface RoomError { code: RoomErrorCode; message: string; roomId?: string }
 export interface RoomParticipantJoined { participant: RoomParticipant; room: RoomSnapshot }
@@ -28,7 +31,7 @@ export interface RoomParticipantLeft { participantId: string; reason: "left" | "
 export interface RoomLeft { roomId: string }
 
 export interface ClientToServerEvents {
-  "room:create": () => void;
+  "room:create": (request: RoomCreateRequest) => void;
   "room:join": (request: RoomJoinRequest) => void;
   "room:leave": () => void;
   "room:ready": (request: RoomReadyRequest) => void;
