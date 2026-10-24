@@ -1,0 +1,12 @@
+node_modules/
+client/.next/
+client/out/
+server/dist/
+.env
+.env.*
+!.env.example
+client/.env.local
+server/.env
+*.log
+.DS_Store
+Thumbs.db
