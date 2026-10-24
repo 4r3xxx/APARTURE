@@ -18,50 +18,85 @@ interface MusicProfile {
   noteInterval: number;
   filterFrequency: number;
   voice: OscillatorType;
+  padVoice: OscillatorType;
+  padGain: number;
+  noteGain: number;
+  noteDuration: number;
+  style: "haunted" | "festive" | "coastal" | "romantic" | "dreamy" | "minimal";
 }
 
 const MUSIC: Record<BoothTheme, MusicProfile> = {
   halloween: {
-    chords: [[50, 53, 57], [46, 50, 53], [48, 51, 55], [50, 53, 57]],
-    melody: [62, 65, 69, 72, 69, 65, 60, 62],
-    noteInterval: 2300,
-    filterFrequency: 1150,
-    voice: "triangle",
+    chords: [[50, 53, 56], [46, 50, 53], [48, 51, 54], [50, 53, 56]],
+    melody: [62, 63, 68, 69, 63, 62, 56, 57],
+    noteInterval: 2850,
+    filterFrequency: 780,
+    voice: "sawtooth",
+    padVoice: "triangle",
+    padGain: 0.06,
+    noteGain: 0.09,
+    noteDuration: 2.35,
+    style: "haunted",
   },
   christmas: {
     chords: [[55, 59, 62], [50, 54, 57], [52, 55, 59], [55, 59, 62]],
-    melody: [67, 71, 74, 79, 76, 74, 71, 69],
-    noteInterval: 1900,
-    filterFrequency: 2100,
+    melody: [74, 78, 81, 86, 83, 81, 78, 76],
+    noteInterval: 1750,
+    filterFrequency: 2800,
     voice: "sine",
+    padVoice: "sine",
+    padGain: 0.055,
+    noteGain: 0.14,
+    noteDuration: 1.15,
+    style: "festive",
   },
   summer: {
-    chords: [[52, 56, 59], [47, 51, 54], [49, 52, 56], [52, 56, 59]],
-    melody: [64, 68, 71, 76, 73, 71, 68, 66],
-    noteInterval: 1700,
-    filterFrequency: 1900,
+    chords: [[52, 56, 59], [49, 52, 56], [47, 51, 54], [52, 56, 59]],
+    melody: [76, 79, 83, 88, 86, 83, 79, 76],
+    noteInterval: 1450,
+    filterFrequency: 3200,
     voice: "triangle",
+    padVoice: "sine",
+    padGain: 0.045,
+    noteGain: 0.12,
+    noteDuration: 0.9,
+    style: "coastal",
   },
   valentines: {
-    chords: [[53, 57, 60], [48, 52, 55], [50, 53, 57], [53, 57, 60]],
-    melody: [65, 69, 72, 77, 74, 72, 69, 67],
-    noteInterval: 2450,
-    filterFrequency: 1650,
+    chords: [[53, 57, 60], [48, 52, 55], [45, 48, 52], [50, 53, 57]],
+    melody: [72, 76, 79, 84, 81, 79, 76, 74],
+    noteInterval: 2550,
+    filterFrequency: 2200,
     voice: "sine",
+    padVoice: "triangle",
+    padGain: 0.065,
+    noteGain: 0.105,
+    noteDuration: 2.1,
+    style: "romantic",
   },
   aesthetic: {
-    chords: [[50, 54, 57], [45, 49, 52], [47, 50, 54], [50, 54, 57]],
-    melody: [62, 66, 69, 74, 71, 69, 66, 64],
-    noteInterval: 2800,
-    filterFrequency: 1350,
+    chords: [[50, 54, 57], [45, 49, 52], [47, 50, 54], [45, 50, 54]],
+    melody: [69, 74, 76, 81, 78, 74, 73, 69],
+    noteInterval: 3050,
+    filterFrequency: 1700,
     voice: "sine",
+    padVoice: "sine",
+    padGain: 0.045,
+    noteGain: 0.075,
+    noteDuration: 2.8,
+    style: "dreamy",
   },
   modern: {
     chords: [[48, 52, 55], [43, 47, 50], [45, 48, 52], [48, 52, 55]],
-    melody: [60, 64, 67, 72, 70, 67, 64, 62],
-    noteInterval: 2050,
-    filterFrequency: 1450,
-    voice: "sine",
+    melody: [72, 79, 84, 82, 79, 76, 74, 81],
+    noteInterval: 2150,
+    filterFrequency: 2300,
+    voice: "triangle",
+    padVoice: "sawtooth",
+    padGain: 0.035,
+    noteGain: 0.09,
+    noteDuration: 0.72,
+    style: "minimal",
   },
 };
 
@@ -71,6 +106,43 @@ interface MusicController {
 
 function midiFrequency(note: number) {
   return 440 * 2 ** ((note - 69) / 12);
+}
+
+function addHauntedTexture(context: AudioContext, destination: AudioNode) {
+  const buffer = context.createBuffer(1, context.sampleRate * 3, context.sampleRate);
+  const channel = buffer.getChannelData(0);
+  for (let index = 0; index < channel.length; index += 1) channel[index] = Math.random() * 2 - 1;
+
+  const wind = context.createBufferSource();
+  wind.buffer = buffer;
+  wind.loop = true;
+  const windFilter = context.createBiquadFilter();
+  windFilter.type = "bandpass";
+  windFilter.frequency.value = 420;
+  windFilter.Q.value = 0.7;
+  const windGain = context.createGain();
+  windGain.gain.value = 0.012;
+  wind.connect(windFilter);
+  windFilter.connect(windGain);
+  windGain.connect(destination);
+  wind.start();
+
+  const drone = context.createOscillator();
+  const droneGain = context.createGain();
+  drone.type = "triangle";
+  drone.frequency.value = midiFrequency(38);
+  droneGain.gain.value = 0.025;
+  drone.connect(droneGain);
+  droneGain.connect(destination);
+  drone.start();
+
+  const pulse = context.createOscillator();
+  const pulseDepth = context.createGain();
+  pulse.frequency.value = 0.13;
+  pulseDepth.gain.value = 0.012;
+  pulse.connect(pulseDepth);
+  pulseDepth.connect(windGain.gain);
+  pulse.start();
 }
 
 function startThemeMusic(theme: BoothTheme): MusicController {
@@ -93,14 +165,16 @@ function startThemeMusic(theme: BoothTheme): MusicController {
   const pad = profile.chords[0].map((note, index) => {
     const oscillator = context.createOscillator();
     const gain = context.createGain();
-    oscillator.type = index === 0 ? "triangle" : "sine";
+    oscillator.type = profile.padVoice;
     oscillator.frequency.value = midiFrequency(note - 12);
-    gain.gain.value = index === 0 ? 0.09 : 0.055;
+    gain.gain.value = profile.padGain / (index === 0 ? 1 : 1.6);
     oscillator.connect(gain);
     gain.connect(filter);
     oscillator.start();
     return oscillator;
   });
+
+  if (profile.style === "haunted") addHauntedTexture(context, master);
 
   let chordIndex = 0;
   const chordTimer = window.setInterval(() => {
@@ -119,12 +193,27 @@ function startThemeMusic(theme: BoothTheme): MusicController {
     oscillator.type = profile.voice;
     oscillator.frequency.value = midiFrequency(profile.melody[melodyIndex]);
     envelope.gain.setValueAtTime(0.0001, startAt);
-    envelope.gain.exponentialRampToValueAtTime(0.19, startAt + 0.08);
-    envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + 1.8);
+    envelope.gain.exponentialRampToValueAtTime(profile.noteGain, startAt + (profile.style === "dreamy" ? 0.32 : 0.08));
+    envelope.gain.exponentialRampToValueAtTime(0.0001, startAt + profile.noteDuration);
     oscillator.connect(envelope);
     envelope.connect(filter);
     oscillator.start(startAt);
-    oscillator.stop(startAt + 1.85);
+    oscillator.stop(startAt + profile.noteDuration + 0.05);
+
+    if (profile.style === "festive" || profile.style === "coastal") {
+      const overtone = context.createOscillator();
+      const overtoneGain = context.createGain();
+      overtone.type = "sine";
+      overtone.frequency.value = midiFrequency(profile.melody[melodyIndex] + 12);
+      overtoneGain.gain.setValueAtTime(0.0001, startAt);
+      overtoneGain.gain.exponentialRampToValueAtTime(profile.noteGain * 0.24, startAt + 0.025);
+      overtoneGain.gain.exponentialRampToValueAtTime(0.0001, startAt + profile.noteDuration * 0.7);
+      overtone.connect(overtoneGain);
+      overtoneGain.connect(filter);
+      overtone.start(startAt);
+      overtone.stop(startAt + profile.noteDuration * 0.7 + 0.05);
+    }
+
     melodyIndex = (melodyIndex + 1) % profile.melody.length;
   };
   playMelodyNote();
@@ -195,6 +284,8 @@ export default function ThemeAtmosphere({ theme }: { theme: BoothTheme }) {
     }
   }
 
+  const themeName = theme === "christmas" ? "Holidays" : theme === "valentines" ? "Valentine’s" : theme[0].toUpperCase() + theme.slice(1);
+
   return (
     <>
       <div className="theme-atmosphere" aria-hidden="true">
@@ -217,7 +308,7 @@ export default function ThemeAtmosphere({ theme }: { theme: BoothTheme }) {
         </div>
       </div>
       <button
-        aria-label={`${musicPlaying ? "Pause" : "Play"} ${theme} theme music`}
+        aria-label={`${musicPlaying ? "Pause" : "Play"} ${themeName} theme music`}
         aria-pressed={musicPlaying}
         className={`theme-sound-toggle${musicPlaying ? " theme-sound-toggle--playing" : ""}`}
         onClick={toggleMusic}

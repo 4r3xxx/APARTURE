@@ -288,6 +288,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .theme-shell > :not(.theme-atmosphere) { position: relative; z-index: 1; }
 .theme-atmosphere { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; background: #282d2b; }
 .theme-atmosphere-image { position: absolute; inset: -2%; background-position: center; background-size: cover; animation: theme-scene-drift 46s ease-in-out infinite alternate; will-change: transform; }
+.theme-atmosphere-image::after { content: ""; position: absolute; inset: 0; background-position: center; background-size: cover; opacity: 0; transform: scale(1.04); transition: opacity .45s ease; will-change: transform; }
 .theme-atmosphere-shade { position: absolute; inset: 0; background: var(--scene-overlay); }
 .theme-atmosphere-particles { position: absolute; inset: 0; overflow: hidden; }
 .theme-particle { position: absolute; top: -9vh; color: rgba(255, 250, 235, .78); font-size: 15px; line-height: 1; opacity: .48; text-shadow: 0 1px 8px rgba(255, 224, 169, .45); animation: theme-particle-fall 20s linear infinite; }
@@ -305,6 +306,26 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
   from { transform: scale(1.02) translate3d(-.35%, 0, 0); }
   to { transform: scale(1.09) translate3d(.35%, -1%, 0); }
 }
+@keyframes theme-hover-scene {
+  from { transform: scale(1.04) translate3d(-.55%, .15%, 0); }
+  to { transform: scale(1.12) translate3d(.55%, -.65%, 0); }
+}
+@keyframes theme-card-shimmer {
+  from { transform: translateX(-38%) rotate(18deg); }
+  to { transform: translateX(38%) rotate(18deg); }
+}
+@keyframes theme-orbit-turn {
+  from { transform: rotate(0deg) scale(1); }
+  to { transform: rotate(150deg) scale(1.12); }
+}
+@keyframes theme-icon-float {
+  from { transform: translateY(0) scale(1); }
+  to { transform: translateY(-3px) scale(1.12); }
+}
+@keyframes theme-glint-pulse {
+  from { opacity: .48; transform: scale(.86) rotate(-12deg); }
+  to { opacity: 1; transform: scale(1.18) rotate(14deg); }
+}
 @keyframes theme-particle-fall {
   0% { transform: translate3d(0, -8vh, 0) rotate(0deg); opacity: 0; }
   12% { opacity: .48; }
@@ -318,6 +339,12 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .theme-shell[data-booth-theme="valentines"] .theme-atmosphere-image { background-image: url("/themes/valentines.webp"); }
 .theme-shell[data-booth-theme="aesthetic"] .theme-atmosphere-image { background-image: url("/themes/aesthetic.webp"); }
 .theme-shell[data-booth-theme="modern"] .theme-atmosphere-image { background-image: url("/themes/modern.webp"); }
+.theme-shell[data-scene-preview="halloween"] .theme-atmosphere-image::after { background-image: url("/themes/halloween.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
+.theme-shell[data-scene-preview="christmas"] .theme-atmosphere-image::after { background-image: url("/themes/christmas.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
+.theme-shell[data-scene-preview="summer"] .theme-atmosphere-image::after { background-image: url("/themes/summer.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
+.theme-shell[data-scene-preview="valentines"] .theme-atmosphere-image::after { background-image: url("/themes/valentines.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
+.theme-shell[data-scene-preview="aesthetic"] .theme-atmosphere-image::after { background-image: url("/themes/aesthetic.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
+.theme-shell[data-scene-preview="modern"] .theme-atmosphere-image::after { background-image: url("/themes/modern.webp"); opacity: 1; animation: theme-hover-scene 7s ease-in-out infinite alternate; }
 
 .theme-shell[data-booth-theme="halloween"] {
   --paper: #211a27; --paper-deep: #312638; --ink: #f7efe7; --ink-soft: #c9bac6;
@@ -421,13 +448,19 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .theme-choice--selected .theme-choice-check { opacity: 1; transform: scale(1); }
 .theme-picker + .button { margin-top: 17px; }
 
-.theme-art { width: 92px; height: 76px; position: relative; flex: 0 0 auto; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(38, 58, 50, .1); border-radius: 7px; background: #eee8db; }
+.theme-art { width: 92px; height: 76px; position: relative; flex: 0 0 auto; display: grid; place-items: center; overflow: hidden; border: 1px solid rgba(38, 58, 50, .1); border-radius: 7px; background: #eee8db; transition: transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease; }
+.theme-art::before { content: ""; position: absolute; z-index: 0; inset: -60% -35%; background: linear-gradient(105deg, transparent 38%, rgba(255,255,255,.4) 50%, transparent 62%); opacity: 0; pointer-events: none; }
+.theme-choice:hover .theme-art, .theme-choice:focus-visible .theme-art, .theme-teaser:hover .theme-art, .theme-teaser:focus-visible .theme-art { transform: scale(1.07) rotate(-1.5deg); box-shadow: 0 8px 20px rgba(22, 20, 18, .16); }
+.theme-choice:hover .theme-art::before, .theme-choice:focus-visible .theme-art::before, .theme-teaser:hover .theme-art::before, .theme-teaser:focus-visible .theme-art::before { opacity: .68; animation: theme-card-shimmer 1.8s ease-in-out infinite alternate; }
 .theme-art--compact { width: 65px; height: 54px; border-radius: 5px; }
-.theme-art-orbit { width: 43px; height: 43px; position: absolute; top: 9px; right: 15px; border: 1px solid rgba(255,255,255,.58); border-radius: 50%; background: rgba(255,255,255,.18); }
+.theme-art-orbit { width: 43px; height: 43px; position: absolute; top: 9px; right: 15px; border: 1px solid rgba(255,255,255,.58); border-radius: 50%; background: rgba(255,255,255,.18); transition: transform .3s ease; }
+.theme-choice:hover .theme-art-orbit, .theme-choice:focus-visible .theme-art-orbit, .theme-teaser:hover .theme-art-orbit, .theme-teaser:focus-visible .theme-art-orbit { animation: theme-orbit-turn 2.4s ease-in-out infinite alternate; }
 .theme-art--compact .theme-art-orbit { width: 32px; height: 32px; top: 6px; right: 11px; }
 .theme-art-icon { position: relative; z-index: 1; color: #fffaf1; font-family: Georgia, serif; font-size: 22px; text-shadow: 0 1px 7px rgba(0,0,0,.24); }
+.theme-choice:hover .theme-art-icon, .theme-choice:focus-visible .theme-art-icon, .theme-teaser:hover .theme-art-icon, .theme-teaser:focus-visible .theme-art-icon { animation: theme-icon-float .9s ease-in-out infinite alternate; }
 .theme-art--compact .theme-art-icon { font-size: 17px; }
 .theme-art-glint { position: absolute; z-index: 2; right: 10px; bottom: 7px; color: rgba(255,255,255,.88); font-size: 10px; }
+.theme-choice:hover .theme-art-glint, .theme-choice:focus-visible .theme-art-glint, .theme-teaser:hover .theme-art-glint, .theme-teaser:focus-visible .theme-art-glint { animation: theme-glint-pulse .65s ease-in-out infinite alternate; }
 .theme-art--compact .theme-art-glint { right: 7px; bottom: 4px; font-size: 8px; }
 .theme-art--halloween { background: radial-gradient(circle at 72% 29%, #f0b461 0 13%, transparent 14%), linear-gradient(140deg, #282238, #593b59 58%, #c96b42); }
 .theme-art--halloween .theme-art-orbit { border-color: rgba(255,213,157,.6); background: rgba(245,171,98,.2); }

@@ -11,7 +11,7 @@ export const DEFAULT_BOOTH_THEME: BoothTheme = "aesthetic";
 
 export const BOOTH_THEMES: BoothThemeOption[] = [
   { id: "halloween", name: "Halloween", description: "Moonlit mischief", icon: "☾" },
-  { id: "christmas", name: "Christmas", description: "A winter postcard", icon: "✳" },
+  { id: "christmas", name: "Holidays", description: "A cozy holiday postcard", icon: "✳" },
   { id: "summer", name: "Summer", description: "Golden hour forever", icon: "☼" },
   { id: "valentines", name: "Valentine’s", description: "Sweetheart season", icon: "♡" },
   { id: "aesthetic", name: "Aesthetic", description: "Soft, quiet tones", icon: "✿" },

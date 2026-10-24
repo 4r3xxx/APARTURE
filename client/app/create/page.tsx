@@ -16,6 +16,7 @@ export default function CreateRoomPage() {
   const [connectionError, setConnectionError] = useState("");
   const [copyState, setCopyState] = useState("Copy invite link");
   const [theme, setTheme] = useState<BoothTheme>(DEFAULT_BOOTH_THEME);
+  const [hoverTheme, setHoverTheme] = useState<BoothTheme | null>(null);
   const creationRequested = useRef(false);
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function CreateRoomPage() {
   }
 
   return (
-    <div className="theme-shell" data-booth-theme={theme}>
+    <div className="theme-shell" data-booth-theme={theme} data-scene-preview={hoverTheme ?? undefined}>
       <ThemeAtmosphere theme={theme} />
       <SiteHeader />
       <main className="flow-page page-shell">
@@ -109,6 +110,10 @@ export default function CreateRoomPage() {
                     id={`theme-${option.id}`}
                     key={option.id}
                     onClick={() => setTheme(option.id)}
+                    onBlur={() => setHoverTheme(null)}
+                    onFocus={() => setHoverTheme(option.id)}
+                    onMouseEnter={() => setHoverTheme(option.id)}
+                    onMouseLeave={() => setHoverTheme(null)}
                     type="button"
                   >
                     <ThemeArtwork theme={option.id} compact />
