@@ -59,7 +59,10 @@ for _, entry in ipairs(room.participants) do
     room.updatedAt = tonumber(ARGV[4])
     redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ARGV[5])
     redis.call('SET', KEYS[2], roomId, 'EX', ARGV[5])
-    return cjson.encode({ room = room, participant = entry.publicParticipant, isNew = false })
+    -- cjson cannot encode the same Lua table twice in one response; clone the
+    -- participant so it is independent from the copy nested inside the room.
+    local responseParticipant = cjson.decode(cjson.encode(entry.publicParticipant))
+    return cjson.encode({ room = room, participant = responseParticipant, isNew = false })
   end
 end
 if #room.participants >= 2 then
@@ -71,7 +74,9 @@ for _, entry in ipairs(room.participants) do
   if entry.publicParticipant.role == 'host' then role = 'guest' end
 end
 participant.role = role
-table.insert(room.participants, { publicParticipant = participant, socketId = socketId })
+-- Keep the room copy independent from the top-level response participant.
+local roomParticipant = cjson.decode(cjson.encode(participant))
+table.insert(room.participants, { publicParticipant = roomParticipant, socketId = socketId })
 room.updatedAt = tonumber(ARGV[4])
 redis.call('SET', KEYS[1], cjson.encode(room), 'EX', ARGV[5])
 redis.call('SET', KEYS[2], roomId, 'EX', ARGV[5])
@@ -249,7 +254,11 @@ export class RedisRoomManager implements RoomStore {
 
   private async eval(script: string, keys: string[], args: Array<string | number | boolean>): Promise<ScriptResult> {
     const result = await this.redis.eval(script, keys.length, ...keys, ...args.map(String));
-    return JSON.parse(String(result)) as ScriptResult;
+    const parsed = JSON.parse(String(result)) as ScriptResult | null;
+    if (!parsed || typeof parsed !== "object") {
+      throw new Error("Redis returned an empty response while updating booth state.");
+    }
+    return parsed;
   }
 
   private throwScriptError(result: ScriptResult): void {
