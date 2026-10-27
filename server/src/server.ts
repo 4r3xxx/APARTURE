@@ -101,11 +101,14 @@ export function createPhotoboothServer(options: {
         return;
       }
 
+      let joinPhase = "load-room-state";
       try {
         const result = await roomManager.join(socket.id, request.roomId);
         socket.data.roomId = result.room.id;
         socket.data.participantId = result.selfParticipantId;
+        joinPhase = "join-socket-room";
         await socket.join(result.room.id);
+        joinPhase = "notify-room-members";
         socket.emit("room:joined", { room: result.room, selfParticipantId: result.selfParticipantId });
 
         if (result.newParticipant) {
@@ -116,6 +119,11 @@ export function createPhotoboothServer(options: {
           io.to(result.room.id).emit("room:state", result.room);
         }
       } catch (error) {
+        console.error("Photobooth room join failed", {
+          phase: joinPhase,
+          name: error instanceof Error ? error.name : "UnknownError",
+          message: error instanceof Error ? error.message : String(error),
+        });
         socket.emit("room:error", toRoomError(error, request.roomId));
       }
     });
